@@ -173,12 +173,27 @@
     .btn-submit-final:active:not(:disabled) { transform: scale(0.99); }
     .btn-submit-final:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
 
+    /* ADIM 0: EKSİK ALAN KIRMIZI VURGUSU */
+    .step0-missing {
+      border-color: var(--red) !important;
+      box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.35), 0 0 14px rgba(231, 76, 60, 0.25) !important;
+      background-color: rgba(231, 76, 60, 0.08) !important;
+    }
+    .step0-grid-missing {
+      border: 1.5px solid var(--red) !important;
+      border-radius: 11px;
+      padding: 6px;
+      background: rgba(231, 76, 60, 0.08);
+      box-shadow: 0 0 14px rgba(231, 76, 60, 0.25);
+    }
+
     /* ADIM 0: MOD RADARI, 16 YEMEK VE FİYAT BARLARI */
     .radar-wrap {
       position: relative; width: 100%; height: 185px;
       background: radial-gradient(circle, #262318 0%, #141414 100%);
       border: 1.5px solid #3c3c3c; border-radius: 12px; touch-action: none; cursor: pointer;
       margin-bottom: 12px; overflow: hidden;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
     .r-line-h { position: absolute; top: 50%; width: 100%; height: 1px; background: rgba(255,255,255,0.08); }
     .r-line-v { position: absolute; left: 50%; height: 100%; width: 1px; background: rgba(255,255,255,0.08); }
@@ -191,7 +206,7 @@
       transform: translate(-50%, -50%); box-shadow: 0 0 14px var(--gold); pointer-events: none;
       opacity: 0.2; transition: opacity 0.2s;
     }
-    .chip-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 7px; margin-top: 6px; }
+    .chip-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 7px; margin-top: 6px; transition: all 0.2s; }
     .check-chip {
       background: var(--surface-2); border: 1.5px solid #383838; border-radius: 9px;
       padding: 7px 9px; font-size: 0.75rem; font-weight: 600; cursor: pointer;
@@ -720,12 +735,12 @@
       </div>
 
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
-        <div style="background:var(--surface-2); padding:10px; border-radius:10px; border:1px solid #333;">
+        <div id="boxBreakMin" style="background:var(--surface-2); padding:10px; border-radius:10px; border:1.5px solid #333; transition: all 0.2s;">
           <div style="font-size:0.73rem; color:var(--muted);">⏱ Öğle Arası Boş Süren:</div>
           <div style="font-size:0.88rem; font-weight:800; color:var(--amber); margin:4px 0;" id="lblBreakMin">Seçilmedi</div>
           <input type="range" id="sliderBreakMin" min="30" max="90" step="5" value="40">
         </div>
-        <div style="background:var(--surface-2); padding:10px; border-radius:10px; border:1px solid #333;">
+        <div id="boxNormBudget" style="background:var(--surface-2); padding:10px; border-radius:10px; border:1.5px solid #333; transition: all 0.2s;">
           <div style="font-size:0.73rem; color:var(--muted);">💳 Günlük Yemek Bütçen:</div>
           <div style="font-size:0.88rem; font-weight:800; color:var(--amber); margin:4px 0;" id="lblNormBudget">Seçilmedi</div>
           <input type="range" id="sliderNormBudget" min="120" max="500" step="10" value="240">
@@ -757,7 +772,7 @@
       </div>
       <div class="chip-grid" id="groupRuleGrid"></div>
 
-      <button type="button" class="btn-primary" id="btnStartChain" style="margin-top:14px;" disabled onclick="goToGame(1)">
+      <button type="button" class="btn-primary" id="btnStartChain" style="margin-top:14px;" onclick="tryStartStep1()">
         Devam Et & 1. Adıma Başla ➔
       </button>
     </div>
@@ -1241,7 +1256,7 @@
   };
 
   // =========================================================================
-  // ADIM 0: GÜNLÜK RUTİN + 16 YEMEK ÇOKLU SEÇİM (KUTUCUKLAR FİYATSIZ) + BAR
+  // ADIM 0: GÜNLÜK RUTİN + 16 YEMEK ÇOKLU SEÇİM + EKSİK ALAN KIRMIZI KONTROLÜ
   // =========================================================================
   const baselineState = {
     valence: null, arousal: null, radarTouched: false,
@@ -1331,12 +1346,72 @@
       cnt === 3 &&
       baselineState.groupCommonGroundRule !== null;
 
+    if (baselineState.radarTouched) document.getElementById("radarBox").classList.remove("step0-missing");
+    if (baselineState.breakSliderTouched) document.getElementById("boxBreakMin").classList.remove("step0-missing");
+    if (baselineState.budgetSliderTouched) document.getElementById("boxNormBudget").classList.remove("step0-missing");
+    if (cnt === 3) document.getElementById("pastMealsGrid").classList.remove("step0-grid-missing");
+    if (baselineState.groupCommonGroundRule !== null) document.getElementById("groupRuleGrid").classList.remove("step0-grid-missing");
+
     const chip = document.getElementById("step0StatusChip");
     chip.textContent = ready ? "✓ Tamamlandı" : "Seçim Bekleniyor";
     chip.style.color = ready ? "var(--green)" : "var(--amber)";
-    document.getElementById("btnStartChain").disabled = !ready;
     refreshNavUI();
   }
+
+  window.tryStartStep1 = function() {
+    let firstMissingEl = null;
+
+    const radarEl = document.getElementById("radarBox");
+    if (!baselineState.radarTouched) {
+      radarEl.classList.add("step0-missing");
+      document.getElementById("radarReadout").style.color = "var(--red)";
+      if (!firstMissingEl) firstMissingEl = radarEl;
+    } else {
+      radarEl.classList.remove("step0-missing");
+    }
+
+    const breakEl = document.getElementById("boxBreakMin");
+    if (!baselineState.breakSliderTouched) {
+      breakEl.classList.add("step0-missing");
+      document.getElementById("lblBreakMin").style.color = "var(--red)";
+      if (!firstMissingEl) firstMissingEl = breakEl;
+    } else {
+      breakEl.classList.remove("step0-missing");
+    }
+
+    const budgetEl = document.getElementById("boxNormBudget");
+    if (!baselineState.budgetSliderTouched) {
+      budgetEl.classList.add("step0-missing");
+      document.getElementById("lblNormBudget").style.color = "var(--red)";
+      if (!firstMissingEl) firstMissingEl = budgetEl;
+    } else {
+      budgetEl.classList.remove("step0-missing");
+    }
+
+    const pastMealsEl = document.getElementById("pastMealsGrid");
+    if (baselineState.past3Meals.length !== 3) {
+      pastMealsEl.classList.add("step0-grid-missing");
+      document.getElementById("past3Count").style.color = "var(--red)";
+      if (!firstMissingEl) firstMissingEl = pastMealsEl;
+    } else {
+      pastMealsEl.classList.remove("step0-grid-missing");
+    }
+
+    const groupRuleEl = document.getElementById("groupRuleGrid");
+    if (baselineState.groupCommonGroundRule === null) {
+      groupRuleEl.classList.add("step0-grid-missing");
+      if (!firstMissingEl) firstMissingEl = groupRuleEl;
+    } else {
+      groupRuleEl.classList.remove("step0-grid-missing");
+    }
+
+    if (firstMissingEl) {
+      firstMissingEl.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+
+    goToGame(1);
+  };
 
   function renderPastMealPriceBars() {
     const panel = document.getElementById("pastMealsPricePanel");
@@ -1768,7 +1843,6 @@
     const spentPct = Math.min(100, Math.round((spent / weeklyTotalBudget) * 100));
     const remainingPct = weeklyTotalBudget > 0 ? (remaining / weeklyTotalBudget) * 100 : 0;
 
-    // Kalan para azaldıkça renk: Yeşil -> Turuncu -> Kırmızı
     let budgetColor = "var(--green)";
     if (remainingPct <= 25) {
       budgetColor = "var(--red)";
