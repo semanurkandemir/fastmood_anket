@@ -282,19 +282,37 @@
       display: block; background: #181612;
     }
 
-    /* ADIM 1: 16 YEMEK QUIZEI TURNUVASI & SHUFFLE */
-    .bracket-bar {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;
-      background: #141414; padding: 7px 5px; border-radius: 10px; border: 1px solid #2b2b2b;
-      font-size: 0.65rem; text-align: center; margin-bottom: 12px;
+    /* ADIM 1: SADELEŞTİRİLMİŞ İLERLEME ÇUBUĞU & SEÇİM KARTLARI */
+    .simple-progress-wrap {
+      background: #141414;
+      border: 1px solid #2b2b2b;
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
     }
-    .b-col { display: flex; flex-direction: column; gap: 3px; justify-content: flex-start; }
-    .b-chip {
-      background: var(--surface-2); padding: 3px 2px; border-radius: 4px;
-      border: 1px solid #363636; white-space: nowrap; overflow: hidden;
-      text-overflow: ellipsis; font-size: 0.62rem; color: var(--muted);
+    .simple-progress-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 7px;
     }
-    .b-chip.won { border-color: var(--gold); color: var(--gold); font-weight: 800; }
+    .simple-progress-bg {
+      width: 100%;
+      height: 7px;
+      background: #2b2b2b;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .simple-progress-fill {
+      height: 100%;
+      width: 6%;
+      background: linear-gradient(90deg, var(--gold), var(--green));
+      border-radius: 99px;
+      transition: width 0.25s ease;
+    }
 
     .vs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; position: relative; }
     .vs-grid.shuffled-pop { animation: shufflePop 0.28s ease; }
@@ -674,21 +692,24 @@
     </div>
   </div>
 
-  <!-- ADIM 1: 16 YEMEK QUIZEI TURNUVASI (15 EŞLEŞME + SHUFFLE) -->
+  <!-- ADIM 1: SADELEŞTİRİLMİŞ EN CAZİP YEMEĞİ SEÇME OYUNU -->
   <div class="screen" id="scr1">
     <div class="card">
       <div class="card-header-row">
-        <div class="card-title" id="qStageTitle">🏆 1. Adım: Hangisini Tercih Edersin?</div>
+        <div class="card-title" id="qStageTitle">🍽️ 1. Adım: Hangisi Daha Cazip?</div>
         <button type="button" class="undo-btn" id="btnUndoQuizei" disabled onclick="undoQuizeiMatch()">↩ Geri Al</button>
       </div>
       <div class="card-sub">
-        Fiyatına ve süresine göre iki seçenekten sana daha cazip geleni seç. İkisini de çok seviyorsan <b>Karıştır (Shuffle)</b> ile turdaki seçilmemiş yemeklerden yeni eşleşme getirebilirsin:
+        Fiyatına ve süresine bakıp sana daha cazip gelen yemeğe dokun. Kararsız kalırsan alttaki <b>Karıştır</b> tuşuyla yeni iki yemek getirebilirsin:
       </div>
-      <div class="bracket-bar">
-        <div class="b-col" id="bColR16"></div>
-        <div class="b-col" id="bColQF"></div>
-        <div class="b-col" id="bColSF"></div>
-        <div class="b-col" id="bColFN"></div>
+      <div class="simple-progress-wrap">
+        <div class="simple-progress-top">
+          <span id="qRoundHint">İki seçenekten sana daha cazip geleni seç</span>
+          <strong id="qStepCounter" style="color:var(--gold);">1 / 15</strong>
+        </div>
+        <div class="simple-progress-bg">
+          <div class="simple-progress-fill" id="qProgressFill"></div>
+        </div>
       </div>
       <div class="vs-grid" id="vsGrid">
         <div class="vs-circle">VS</div>
@@ -929,13 +950,13 @@
     },
     {
       id: "makarna", name: "Soslu Sıcak Makarna", short: "Makarna", price: 220, upgradedPrice: 300, emoji: "🍝",
-      walk: 8, queue: 10,
+      walk: 8, queue: 12,
       img: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=600&q=80",
       backupImg: "https://images.pexels.com/photos/1437267/pexels-photo-1437267.jpeg?auto=compress&cs=tinysrgb&w=600"
     },
     {
       id: "bowl", name: "Gurme Bowl", short: "Bowl", price: 250, upgradedPrice: 350, emoji: "🥗",
-      walk: 8, queue: 7,
+      walk: 8, queue: 8,
       img: "https://raw.githubusercontent.com/semanurkandemir/fastmood/refs/heads/main/bowl.png",
       backupImg: "https://images.pexels.com/photos/1092730/pexels-photo-1092730.jpeg?auto=compress&cs=tinysrgb&w=600"
     },
@@ -965,43 +986,43 @@
     },
     {
       id: "sandvic", name: "Sandviç", short: "Sandviç", price: 220, upgradedPrice: 300, emoji: "🥖",
-      walk: 10, queue: 8,
+      walk: 7, queue: 11,
       img: "https://raw.githubusercontent.com/semanurkandemir/fastmood/refs/heads/main/sandvic.png",
       backupImg: "https://images.pexels.com/photos/1600711/pexels-photo-1600711.jpeg?auto=compress&cs=tinysrgb&w=600"
     },
     {
       id: "tantuni", name: "Tantuni", short: "Tantuni", price: 200, upgradedPrice: 250, emoji: "🌯",
-      walk: 10, queue: 8,
+      walk: 10, queue: 11,
       img: "https://raw.githubusercontent.com/semanurkandemir/fastmood/refs/heads/main/tantuni.png",
       backupImg: "https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg?auto=compress&cs=tinysrgb&w=600"
     },
     {
       id: "borek", name: "Börek / Kır Pidesi", short: "Börek / Kır Pidesi", price: 150, upgradedPrice: 210, emoji: "🥐",
-      walk: 11, queue: 3,
+      walk: 12, queue: 3,
       img: "https://raw.githubusercontent.com/semanurkandemir/fastmood/refs/heads/main/b%C3%B6rek.png",
       backupImg: "https://images.pexels.com/photos/2067396/pexels-photo-2067396.jpeg?auto=compress&cs=tinysrgb&w=600"
     },
     {
-      id: "ev_yemekleri", name: "Geleneksel Ev Yemekleri", short: "Ev Yemekleri", price: 250, upgradedPrice: 350, emoji: "🍛",
+      id: "ev_yemekleri", name: "Geleneksel Ev Yemekleri", short: "Ev Yemekleri", price: 300, upgradedPrice: 400, emoji: "🍛",
       walk: 4, queue: 5,
       img: "https://lh3.googleusercontent.com/gps-cs-s/ANWiy9QjjlV8cpJXa5w2zfOQn8x0hNfcGKY0nPtcV3v0kOzYOYEWLrXWYX-F6YJxklafSWW34dHKpghQLV_NsHBYT6b5n9mCM8obEiBmr_rf2JpW7FGWpty9Fzaj0nQxhprWMVOBeGv-Y6FC008s=s1360-w1360-h1020-rw",
       backupImg: "https://images.pexels.com/photos/675951/pexels-photo-675951.jpeg?auto=compress&cs=tinysrgb&w=600"
     },
     {
       id: "kebap", name: "Porsiyon Izgara Kebap", short: "Kebap", price: 330, upgradedPrice: 460, emoji: "🍢",
-      walk: 10, queue: 15,
+      walk: 8, queue: 20,
       img: "https://raw.githubusercontent.com/semanurkandemir/fastmood/refs/heads/main/kebap.jpeg",
       backupImg: "https://images.pexels.com/photos/2233729/pexels-photo-2233729.jpeg?auto=compress&cs=tinysrgb&w=600"
     },
     {
       id: "cig_kofte", name: "Dürüm Çiğ Köfte", short: "Çiğ Köfte", price: 110, upgradedPrice: 155, emoji: "🧆",
-      walk: 10, queue: 3,
+      walk: 10, queue: 4,
       img: "https://raw.githubusercontent.com/semanurkandemir/fastmood/refs/heads/main/%C3%A7i%C4%9Fk%C3%B6fte.png",
       backupImg: "https://images.pexels.com/photos/1640774/pexels-photo-1640774.jpeg?auto=compress&cs=tinysrgb&w=600"
     },
     {
       id: "patso", name: "Bol Patatesli Patso", short: "Patso", price: 200, upgradedPrice: 250, emoji: "🍟",
-      walk: 8, queue: 6,
+      walk: 9, queue: 7,
       img: "https://raw.githubusercontent.com/semanurkandemir/fastmood/refs/heads/main/patso.png",
       backupImg: "https://images.pexels.com/photos/1583884/pexels-photo-1583884.jpeg?auto=compress&cs=tinysrgb&w=600"
     }
@@ -1034,7 +1055,7 @@
     });
   }
 
-  const stageLabels = ["Başlangıç", "1. Turnuva", "2. Bütçe Kartı", "3. Öncelik", "4. Alışkanlık", "5. Durumlar"];
+  const stageLabels = ["Başlangıç", "1. Seçim", "2. Bütçe Kartı", "3. Öncelik", "4. Alışkanlık", "5. Durumlar"];
   let currentStage = 0;
   let maxReachedStage = 0;
   const visitedStages = new Set([0]);
@@ -1051,7 +1072,7 @@
         return { complete: done === 5, reason: `Başlangıç adımında eksik alanlar var (${done}/5)` };
       }
       case 1:
-        return { complete: qMatchIdx === 15, reason: `1. Adımda ${15 - qMatchIdx} eşleşme daha seçilmeli` };
+        return { complete: qMatchIdx === 15, reason: `1. Adımda ${15 - qMatchIdx} seçim daha yapılmalı` };
       case 2:
         return { complete: weeklyDayAllocations.length === 5, reason: "2. Adımda harcama planı tamamlanmadı" };
       case 3:
@@ -1278,7 +1299,6 @@
     document.getElementById("past3Count").style.color = cnt === 3 ? "var(--green)" : "var(--amber)";
     document.getElementById("past3ClearLink").style.display = cnt > 0 ? "inline" : "none";
 
-    // Kutucuklarda fiyat gösterilmez — kullanıcı fiyatı alttaki barlardan seçer
     document.getElementById("pastMealsGrid").innerHTML = allMeals16.map(m => {
       const mealCount = baselineState.past3Meals.filter(x => x.id === m.id).length;
       const sel = mealCount > 0;
@@ -1346,7 +1366,7 @@
   };
 
   // =========================================================================
-  // ADIM 1: 16 YEMEK QUIZEI TURNUVASI (15 EŞLEŞME + SHUFFLE MEKANİĞİ)
+  // ADIM 1: 16 YEMEK QUIZEI TURNUVASI (SADE ARAYÜZ + SHUFFLE MEKANİĞİ)
   // =========================================================================
   function shuffleArray(arr) {
     const a = [...arr];
@@ -1390,37 +1410,32 @@
   function renderQuizeiMatch(isAfterShuffle = false) {
     document.getElementById("btnUndoQuizei").disabled = quizeiUndoStack.length === 0;
 
-    document.getElementById("bColR16").innerHTML = `<div style="color:var(--muted); font-size:0.62rem; margin-bottom:2px;">Son 16</div>` +
-      [0,1,2,3,4,5,6,7].map(i => `<div class="b-chip ${qfList[i]?'won':''}">${qfList[i]?qfList[i].short:(qMatchIdx===i?'▶':'-')}</div>`).join("");
-    document.getElementById("bColQF").innerHTML = `<div style="color:var(--muted); font-size:0.62rem; margin-bottom:2px;">Çeyrek</div>` +
-      [0,1,2,3].map(i => `<div class="b-chip ${sfList[i]?'won':''}">${sfList[i]?sfList[i].short:(qMatchIdx===8+i?'▶':'-')}</div>`).join("");
-    document.getElementById("bColSF").innerHTML = `<div style="color:var(--muted); font-size:0.62rem; margin-bottom:2px;">Yarı F.</div>` +
-      [0,1].map(i => `<div class="b-chip ${fnList[i]?'won':''}">${fnList[i]?fnList[i].short:(qMatchIdx===12+i?'▶':'-')}</div>`).join("");
-    document.getElementById("bColFN").innerHTML = `<div style="color:var(--muted); font-size:0.62rem; margin-bottom:2px;">Final</div>` +
-      `<div class="b-chip ${championMeal?'won':''}" style="height:28px; display:flex; align-items:center; justify-content:center;">${championMeal?('👑 '+championMeal.short):'?'}</div>`;
-
     if (qMatchIdx >= 15) {
       initWeeklyBudgetGame();
       goToGame(2);
       return;
     }
 
-    let stageText = "";
     if (qMatchIdx < 8) {
       currentPair = [r16List[qMatchIdx * 2], r16List[qMatchIdx * 2 + 1]];
-      stageText = `🏆 1. Adım: Son 16 Eşleşmesi (${qMatchIdx + 1} / 8)`;
     } else if (qMatchIdx < 12) {
       currentPair = [qfList[(qMatchIdx - 8) * 2], qfList[(qMatchIdx - 8) * 2 + 1]];
-      stageText = `🔥 1. Adım: Çeyrek Final (${qMatchIdx - 7} / 4)`;
     } else if (qMatchIdx < 14) {
       currentPair = [sfList[(qMatchIdx - 12) * 2], sfList[(qMatchIdx - 12) * 2 + 1]];
-      stageText = `⚡ 1. Adım: Yarı Final (${qMatchIdx - 11} / 2)`;
     } else {
       currentPair = [fnList[0], fnList[1]];
-      stageText = `👑 1. Adım: Büyük Final`;
     }
 
-    document.getElementById("qStageTitle").textContent = stageText;
+    // Sadeleştirilmiş üst başlık ve ilerleme çubuğu
+    const isFinalMatch = qMatchIdx === 14;
+    document.getElementById("qStageTitle").textContent = isFinalMatch
+      ? "👑 1. Adım: Son Seçim!"
+      : "🍽️ 1. Adım: Hangisi Daha Cazip?";
+    document.getElementById("qRoundHint").textContent = isFinalMatch
+      ? "En cazip gelen favori yemeğini belirle"
+      : "İki seçenekten sana daha cazip geleni seç";
+    document.getElementById("qStepCounter").textContent = `${qMatchIdx + 1} / 15`;
+    document.getElementById("qProgressFill").style.width = `${Math.round(((qMatchIdx + 1) / 15) * 100)}%`;
 
     ["qLeft", "qRight"].forEach((elId, idx) => {
       const v = currentPair[idx];
@@ -1451,14 +1466,12 @@
     const shuffleBtn = document.getElementById("btnShuffleQuizei");
     if (remainingInRound >= 4) {
       shuffleBtn.disabled = false;
-      shuffleBtn.textContent = remainingInRound >= 6
-        ? `🔀 İkisini de Seviyorum — Karıştır (Seçilmemiş ${remainingInRound - 2} yemekten yeni 2'li getir)`
-        : `🔀 İkisini de Seviyorum — Eşleşmeleri Karıştır (Son 4 yemek)`;
+      shuffleBtn.textContent = "🔀 İkisini de Seviyorum — Başka İkili Getir";
     } else {
       shuffleBtn.disabled = true;
-      shuffleBtn.textContent = qMatchIdx === 14
-        ? "👑 Büyük Final — Şampiyonunu Seç (Karıştırılamaz)"
-        : "🔀 Bu Turun Son Eşleşmesi (Seçilmemiş başka yemek kalmadı)";
+      shuffleBtn.textContent = isFinalMatch
+        ? "👑 Son İkili — Favorini Seç"
+        : "🔀 Bu Aşamada Başka Seçenek Kalmadı";
     }
 
     if (isAfterShuffle) {
@@ -1519,11 +1532,11 @@
       }
 
       reorderedTail = [newA, newB, ...rest];
-      showShuffleToast(`🔀 ${curA.short} ve ${curB.short} farklı eşleşmelere ayrıldı — yeni 2 yemek getirildi!`);
+      showShuffleToast(`🔀 ${curA.short} ve ${curB.short} ayrıldı — yeni 2 yemek getirildi!`);
     } else {
       const [c, d] = others;
       reorderedTail = [c, curA, d, curB];
-      showShuffleToast(`🔀 ${curA.short} ve ${curB.short} birbirinden ayrılarak çapraz eşleştirildi!`);
+      showShuffleToast(`🔀 ${curA.short} ve ${curB.short} farklı yemeklerle eşleştirildi!`);
     }
 
     for (let i = 0; i < reorderedTail.length; i++) {
@@ -1928,7 +1941,6 @@
       `;
     }
 
-    // 5. soruda yemek seçildiyse alttaki "Anketi Bitirdim, Eminim — Gönder" kutusunu göster
     const finalBox = document.getElementById("finalSubmitBox");
     const lastAns = moodAnswers[moodScenarios.length - 1];
     if (isLastQuestion && lastAns) {
@@ -1945,7 +1957,6 @@
   window.selectMoodReason = function(reasonId) {
     currentMoodReason = reasonId;
     if (moodIdx === moodScenarios.length - 1 && moodAnswers[moodIdx]) {
-      // Kriter değişirse son seçilen yemeğin hala uygun olup olmadığını kontrol et
       const excluded = moodReasonExclusions[reasonId] || [];
       if (excluded.includes(moodAnswers[moodIdx].meal_id)) {
         moodAnswers[moodIdx] = undefined;
@@ -1989,7 +2000,6 @@
       renderMoodStep(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
-      // Son soruda seçimi işaretle ve alttaki gönder onay kutusuna kaydır
       renderMoodStep(false);
       setTimeout(() => {
         document.getElementById("finalSubmitBox").scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -2034,7 +2044,6 @@
     const quizeiWaitTight  = clamp((35 - champWait) / 30, 0, 1);
     const quizeiTasteTight = clamp((champPrice - 60) / 290, 0, 1);
 
-    // 1) V1: Fiyat Hassasiyeti
     const budgetTight = clamp((500 - (baselineState.normalBudgetTl || 240)) / 380, 0, 1);
     const cardFrugality = 1.0 - upgradeRatio;
     const pastPriceTight = clamp((350 - pastAvgPrice) / 290, 0, 1);
@@ -2049,7 +2058,6 @@
       0, 1
     ).toFixed(2);
 
-    // 2) V2: Zaman Sabırsızlığı
     const breakTight = clamp((90 - (baselineState.breakMin || 40)) / 70, 0, 1);
     const waitImpatience = clamp((25 - (waitMaxMin ?? 10)) / 20, 0, 1);
     const V2_Zaman_Sabirsizligi = +clamp(
@@ -2061,7 +2069,6 @@
       0, 1
     ).toFixed(2);
 
-    // 3) V3: Lezzet Odağı
     const V3_Lezzet_Odagi = +clamp(
       0.45 * upgradeRatio +
       0.25 * quizeiTasteTight +
@@ -2070,7 +2077,6 @@
       0.10, 1
     ).toFixed(2);
 
-    // 4) V4: Konfor & Sosyal Eğilim
     const groupScore = baselineState.groupCommonGroundRule === "PURE_INDIVIDUAL" ? 0.25 : 0.70;
     const V4_Konfor_Sosyal = +clamp(
       0.55 * groupScore +
@@ -2079,7 +2085,6 @@
       0, 1
     ).toFixed(2);
 
-    // 5) V5: Tekrar Toleransı
     const repObj = repeatOptions.find(r => r.id === selectedRepeatInterval);
     const repVal = repObj ? repObj.val : 0.5;
     const V5_Tekrar_Toleransi = +clamp(
@@ -2087,7 +2092,6 @@
       0, 1
     ).toFixed(2);
 
-    // 6) V6: Yenilik & Durumsal Esneklik
     const uniqueScenarioMeals = new Set(moodAnswers.map(a => a.meal_id)).size;
     const V6_Yenilik_ve_Esneklik = +clamp(
       0.60 * (uniqueScenarioMeals / moodScenarios.length) +
@@ -2103,7 +2107,6 @@
       D02_Tarih: new Date().toISOString(),
       D03_Sure_Sn: Math.round((performance.now() - SESSION_START_MS) / 1000),
 
-      // Adım 0
       D04_Mod_Valence: baselineState.valence,
       D05_Mod_Arousal: baselineState.arousal,
       D06_Ders_Arasi_Dk: baselineState.breakMin,
@@ -2117,24 +2120,20 @@
       D10_Gecen_Hafta_Ort_Fiyat: Math.round(pastAvgPrice),
       D11_Grup_Kurali: baselineState.groupCommonGroundRule,
 
-      // Adım 1
       D12_Quizei_Sampiyon: championMeal ? championMeal.name : "",
       D13_Quizei_Finalist: runnerUpMeal ? runnerUpMeal.name : "",
       D13_Quizei_Shuffle_Sayisi: quizeiShuffleCount,
 
-      // Adım 2
       D14_Haftalik_Toplam_Butce: weeklyTotalBudget,
       D15_Haftalik_Harcanan_TL: spentTotal,
       D16_Haftalik_Yanacak_TL: Math.max(0, weeklyTotalBudget - spentTotal),
       D17_Yukseltilen_Gun_Sayisi: upgradedDaysCount,
       D18_Haftalik_Harcama_Plani: weeklyDayAllocations.map(d => `${d.dayName}:${d.meal.short}(${d.selectedCost}TL)`).join("|"),
 
-      // Adım 3 & 4
       D19_En_Onemli_Kriter: selectedBestPriority,
       D20_Tekrar_Yeme_Suresi: selectedRepeatInterval,
       D21_Maks_Bekleme_Dk: waitMaxMin,
 
-      // Adım 5
       D22_Durum1_Stres_Neden: moodAnswers[0]?.reason,
       D23_Durum1_Stres_Butce: moodAnswers[0]?.budget,
       D24_Durum1_Stres_Yemek: moodAnswers[0]?.meal_name,
@@ -2155,7 +2154,6 @@
       D35_Durum5_Lab_Butce: moodAnswers[4]?.budget,
       D36_Durum5_Lab_Yemek: moodAnswers[4]?.meal_name,
 
-      // 6 Ana Vektör
       V1_Fiyat_Hassasiyeti,
       V2_Zaman_Sabirsizligi,
       V3_Lezzet_Odagi,
@@ -2168,7 +2166,6 @@
   window.confirmAndSendToSupabase = async function() {
     if (isSubmittingFinal) return;
 
-    // Tüm adımların (0..5) eksiksiz tamamlandığını doğrula
     maxReachedStage = 5;
     refreshNavUI();
     for (let i = 0; i <= 5; i++) {
@@ -2222,7 +2219,6 @@
         return;
       }
 
-      // Başarılı kayıt — veri tablosunu göstermeden sadece teşekkür ekranına geç
       document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
       document.getElementById("scrThanks").classList.add("active");
       document.getElementById("navPills").style.display = "none";
@@ -2241,7 +2237,6 @@
     }
   };
 
-  // Başlangıç
   initStep0();
   refreshNavUI();
 </script>
