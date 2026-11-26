@@ -282,36 +282,81 @@
       display: block; background: #181612;
     }
 
-    /* ADIM 1: SADELEŞTİRİLMİŞ İLERLEME ÇUBUĞU & SEÇİM KARTLARI */
-    .simple-progress-wrap {
-      background: #141414;
-      border: 1px solid #2b2b2b;
-      border-radius: 10px;
-      padding: 10px 12px;
-      margin-bottom: 12px;
+    /* ADIM 1: SADELEŞTİRİLMİŞ TUR ÇUBUĞU VE RENK DEĞİŞEN KART */
+    #scr1Card {
+      --round-color: #3498DB;
+      --round-bg: rgba(52, 152, 219, 0.14);
+      border-color: var(--round-color);
+      transition: border-color 0.35s ease, box-shadow 0.35s ease;
     }
-    .simple-progress-top {
+    #scr1Card.round-flash {
+      animation: roundChangePop 0.45s ease;
+    }
+    @keyframes roundChangePop {
+      0% { transform: scale(0.985); }
+      50% { transform: scale(1.008); }
+      100% { transform: scale(1); }
+    }
+
+    .round-tracker-box {
+      background: var(--round-bg);
+      border: 1.5px solid var(--round-color);
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-bottom: 14px;
+      transition: background 0.35s ease, border-color 0.35s ease;
+    }
+    .round-stepper {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-bottom: 9px;
+    }
+    .round-step {
+      background: rgba(18, 18, 18, 0.65);
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 6px 4px;
+      text-align: center;
+      font-size: 0.69rem;
+      font-weight: 700;
+      color: var(--muted);
+      transition: all 0.28s ease;
+    }
+    .round-step.done {
+      background: var(--green-dim);
+      border-color: rgba(46, 204, 113, 0.6);
+      color: var(--green);
+    }
+    .round-step.active {
+      background: var(--round-color);
+      border-color: var(--round-color);
+      color: #121212;
+      font-weight: 900;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    }
+    .round-progress-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.75rem;
-      color: var(--muted);
-      font-weight: 700;
-      margin-bottom: 7px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 6px;
     }
-    .simple-progress-bg {
+    .round-progress-track {
       width: 100%;
-      height: 7px;
-      background: #2b2b2b;
+      height: 6px;
+      background: rgba(0, 0, 0, 0.45);
       border-radius: 99px;
       overflow: hidden;
     }
-    .simple-progress-fill {
+    .round-progress-fill {
       height: 100%;
-      width: 6%;
-      background: linear-gradient(90deg, var(--gold), var(--green));
+      width: 0%;
+      background: var(--round-color);
       border-radius: 99px;
-      transition: width 0.25s ease;
+      transition: width 0.25s ease, background 0.35s ease;
     }
 
     .vs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; position: relative; }
@@ -322,21 +367,24 @@
     }
     .vs-circle {
       position: absolute; left: 50%; top: 43%; transform: translate(-50%, -50%);
-      width: 36px; height: 36px; border-radius: 50%; background: var(--gold); color: #121212;
+      width: 36px; height: 36px; border-radius: 50%; background: var(--round-color, var(--gold)); color: #121212;
       font-weight: 900; font-size: 0.78rem; display: flex; align-items: center; justify-content: center;
       border: 3px solid var(--bg); z-index: 5; box-shadow: 0 4px 12px rgba(0,0,0,0.8);
+      transition: background 0.35s ease;
     }
     .q-card {
       background: var(--surface-2); border: 2px solid #383838; border-radius: 14px;
       overflow: hidden; cursor: pointer; display: flex; flex-direction: column;
       justify-content: space-between; transition: all 0.18s;
     }
-    .q-card:hover { border-color: var(--gold); }
-    .q-card:active { border-color: var(--gold); transform: scale(0.98); }
+    .q-card:hover { border-color: var(--round-color, var(--gold)); }
+    .q-card:active { border-color: var(--round-color, var(--gold)); transform: scale(0.98); }
     .q-body { padding: 10px; display: flex; flex-direction: column; gap: 6px; flex: 1; justify-content: space-between; }
     .q-btn {
-      width: 100%; padding: 8px; border-radius: 8px; background: var(--gold-dim);
-      border: 1px solid var(--gold); color: var(--gold); font-weight: 800; font-size: 0.76rem; text-align: center;
+      width: 100%; padding: 8px; border-radius: 8px; background: var(--round-bg, var(--gold-dim));
+      border: 1px solid var(--round-color, var(--gold)); color: var(--round-color, var(--gold));
+      font-weight: 800; font-size: 0.76rem; text-align: center;
+      transition: all 0.25s ease;
     }
 
     .shuffle-btn {
@@ -382,34 +430,56 @@
     }
     .shuffle-toast.show { display: block; animation: fadeIn 0.2s ease; }
 
-    /* ADIM 2: DİNAMİK HAFTALIK KAMPÜS KARTI OYUNU */
-    .wallet-card {
-      background: linear-gradient(145deg, #241f12 0%, #171717 100%);
-      border: 2px solid var(--gold);
-      border-radius: 14px;
+    /* ADIM 2: SABİT (STICKY) HAFTALIK BÜTÇE ÖZETİ */
+    .wallet-card-simple {
+      background: rgba(36, 36, 36, 0.96);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1.5px solid #3a3a3a;
+      border-radius: 12px;
       padding: 12px 14px;
       margin-bottom: 12px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+      position: -webkit-sticky;
+      position: sticky;
+      top: 98px;
+      z-index: 50;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.72);
+      transition: border-color 0.25s ease;
+    }
+    .wallet-top-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      font-size: 0.76rem;
+      font-weight: 800;
     }
     .wallet-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 6px;
       text-align: center;
-      background: rgba(18, 18, 18, 0.65);
-      padding: 8px;
+      background: rgba(18, 18, 18, 0.6);
+      padding: 9px 6px;
       border-radius: 10px;
       border: 1px solid #333;
-      margin-top: 8px;
     }
-    .w-stat span { display: block; font-size: 0.68rem; color: var(--muted); }
-    .w-stat strong { font-size: 1rem; }
-    .bar-container {
-      margin-top: 8px; height: 8px; background: #2c2c2c; border-radius: 5px; overflow: hidden; display: flex;
+    .w-stat span { display: block; font-size: 0.68rem; color: var(--muted); margin-bottom: 2px; }
+    .w-stat strong { font-size: 0.98rem; transition: color 0.25s ease; }
+    .simple-budget-track {
+      margin-top: 10px;
+      height: 7px;
+      background: #141414;
+      border-radius: 99px;
+      overflow: hidden;
     }
-    .bar-base { background: #555; height: 100%; transition: width 0.25s; }
-    .bar-upgrade { background: var(--gold); height: 100%; transition: width 0.25s; }
-    .bar-burn { background: repeating-linear-gradient(45deg, #e74c3c, #e74c3c 6px, #c0392b 6px, #c0392b 12px); height: 100%; transition: width 0.25s; }
+    .simple-budget-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--green);
+      border-radius: 99px;
+      transition: width 0.25s ease, background 0.25s ease;
+    }
 
     .day-budget-card {
       background: var(--surface-2);
@@ -419,9 +489,9 @@
       margin-bottom: 10px;
       transition: all 0.2s;
     }
-    .day-budget-card.upgraded {
-      border-color: var(--gold);
-      background: linear-gradient(165deg, #222019 0%, #1b1b1b 100%);
+    .day-budget-card.chosen {
+      border-color: rgba(46, 204, 113, 0.55);
+      background: linear-gradient(165deg, #1f221c 0%, #1b1b1b 100%);
     }
     .day-budget-header {
       display: flex;
@@ -441,12 +511,17 @@
       grid-template-columns: repeat(3, 1fr);
       gap: 6px;
     }
+    .tier-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+    }
     .tier-btn-3 {
       background: #171717;
       border: 1.5px solid #3e3e3e;
       color: var(--muted);
       border-radius: 8px;
-      padding: 9px 4px;
+      padding: 9px 5px;
       text-align: center;
       cursor: pointer;
       font-size: 0.72rem;
@@ -455,11 +530,6 @@
       transition: all 0.15s;
     }
     .tier-btn-3 strong { display: block; font-size: 0.82rem; color: var(--text); margin-top: 2px; }
-    .tier-btn-3.active-cafeteria {
-      border-color: #777;
-      background: #2c2c2c;
-      color: var(--text);
-    }
     .tier-btn-3.active-gold {
       border-color: var(--gold);
       background: var(--gold-dim);
@@ -467,7 +537,7 @@
     }
     .tier-btn-3.active-gold strong { color: var(--gold); }
     .tier-btn-3:disabled {
-      opacity: 0.32;
+      opacity: 0.3;
       cursor: not-allowed;
     }
 
@@ -598,6 +668,7 @@
       .card { padding: 12px; }
       .vs-grid { gap: 8px; }
       .tier-grid-3 { grid-template-columns: 1fr; }
+      .tier-grid-2 { grid-template-columns: 1fr; }
       .emoji-card-grid-4 { grid-template-columns: repeat(2, 1fr); }
       .filtered-meal-grid { grid-template-columns: 1fr; }
     }
@@ -692,25 +763,34 @@
     </div>
   </div>
 
-  <!-- ADIM 1: SADELEŞTİRİLMİŞ EN CAZİP YEMEĞİ SEÇME OYUNU -->
+  <!-- ADIM 1: SADELEŞTİRİLMİŞ EN CAZİP YEMEĞİ SEÇME TURNUVASI -->
   <div class="screen" id="scr1">
-    <div class="card">
+    <div class="card" id="scr1Card">
       <div class="card-header-row">
-        <div class="card-title" id="qStageTitle">🍽️ 1. Adım: Hangisi Daha Cazip?</div>
+        <div class="card-title" id="qStageTitle">🏆 1. Adım: En Cazip Yemeği Seç</div>
         <button type="button" class="undo-btn" id="btnUndoQuizei" disabled onclick="undoQuizeiMatch()">↩ Geri Al</button>
       </div>
       <div class="card-sub">
-        Fiyatına ve süresine bakıp sana daha cazip gelen yemeğe dokun. Kararsız kalırsan alttaki <b>Karıştır</b> tuşuyla yeni iki yemek getirebilirsin:
+        İki yemekten <b>sana daha cazip gelene</b> dokun! Kazanan bir üst tura çıkar. İkisini de çok seviyorsan alttan karıştırabilirsin.
       </div>
-      <div class="simple-progress-wrap">
-        <div class="simple-progress-top">
-          <span id="qRoundHint">İki seçenekten sana daha cazip geleni seç</span>
-          <strong id="qStepCounter" style="color:var(--gold);">1 / 15</strong>
+
+      <!-- SADE 4 AŞAMALI TUR GÖSTERGESİ -->
+      <div class="round-tracker-box" id="roundTrackerBox">
+        <div class="round-stepper">
+          <div class="round-step" id="rStep0">Son 16</div>
+          <div class="round-step" id="rStep1">Çeyrek Final</div>
+          <div class="round-step" id="rStep2">Yarı Final</div>
+          <div class="round-step" id="rStep3">👑 Final</div>
         </div>
-        <div class="simple-progress-bg">
-          <div class="simple-progress-fill" id="qProgressFill"></div>
+        <div class="round-progress-row">
+          <span id="roundLabelText">🏆 Son 16 Turu</span>
+          <span id="roundMatchCounter">Eşleşme 1 / 8</span>
+        </div>
+        <div class="round-progress-track">
+          <div class="round-progress-fill" id="roundProgressFill"></div>
         </div>
       </div>
+
       <div class="vs-grid" id="vsGrid">
         <div class="vs-circle">VS</div>
         <div class="q-card" id="qLeft" onclick="pickQuizeiWinner(0)"></div>
@@ -724,55 +804,45 @@
     </div>
   </div>
 
-  <!-- ADIM 2: DİNAMİK HAFTALIK KAMPÜS YEMEK KARTI OYUNU -->
+  <!-- ADIM 2: SADELEŞTİRİLMİŞ HAFTALIK BÜTÇE PLANI -->
   <div class="screen" id="scr2">
     <div class="card">
       <div class="card-header-row">
-        <div class="card-title">💳 2. Adım: Haftalık Kampüs Kartı Harcama Planı</div>
-        <button type="button" class="undo-btn" id="btnResetBudgetPlan" onclick="resetBudgetPlan()">↺ Sıfırla</button>
+        <div class="card-title">💳 2. Adım: 5 Günlük Yemek Planın</div>
+        <button type="button" class="undo-btn" id="btnResetBudgetPlan" onclick="resetBudgetPlan()">↺ Temizle</button>
       </div>
       <div class="card-sub">
-        0. sayfada belirlediğin günlük bütçene göre haftalık kartına bakiye yüklendi. Turnuvada öne çıkardığın <b>İlk 5 Favori Yemeğin</b> aşağıda listelendi. Kartındaki parayı yakmamak için günlere göre menü seçimini yap:
+        Az önceki turnuvadan çıkan <b>İlk 5 Favorin</b> aşağıda. Haftalık bütçeni aşmadan her gün için 1 seçenek işaretle:
       </div>
 
-      <div class="wallet-card">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <span style="font-size:0.75rem; font-weight:800; color:var(--gold);">💳 5 GÜNLÜK KAMPÜS KARTI</span>
-          <span style="font-size:0.72rem; color:var(--muted);">Cuma 17:00'de Sıfırlanır!</span>
+      <div class="wallet-card-simple" id="walletCardSimple">
+        <div class="wallet-top-line">
+          <span style="color:var(--gold);">💰 Haftalık Bütçe Özeti</span>
+          <span id="lblDaysChosenCount" style="color:var(--amber);">0 / 5 Gün Seçildi</span>
         </div>
         <div class="wallet-grid">
           <div class="w-stat">
-            <span>Toplam Yüklenen</span>
-            <strong id="lblWeeklyTotal" style="color:var(--text);">1.200 TL</strong>
+            <span>Haftalık Bütçen</span>
+            <strong id="lblWeeklyTotal" style="color:var(--text);">1200 TL</strong>
           </div>
           <div class="w-stat">
-            <span>Harcanan (5 Gün)</span>
-            <strong id="lblWeeklySpent" style="color:var(--gold);">300 TL</strong>
+            <span>Harcanan</span>
+            <strong id="lblWeeklySpent" style="color:var(--gold);">0 TL</strong>
           </div>
           <div class="w-stat">
-            <span>🔥 Yanacak Bakiye</span>
-            <strong id="lblWeeklyBurn" style="color:var(--red);">900 TL</strong>
+            <span>Kalan Bütçe</span>
+            <strong id="lblWeeklyRemaining" style="color:var(--green);">1200 TL</strong>
           </div>
         </div>
-
-        <div class="bar-container">
-          <div class="bar-base" id="barBase" style="width:25%;" title="Yemekhane Tabanı"></div>
-          <div class="bar-upgrade" id="barUpgrade" style="width:0%;" title="Favorilere Ayrılan"></div>
-          <div class="bar-burn" id="barBurn" style="width:75%;" title="Harcanmazsa Silinecek Bakiye"></div>
-        </div>
-
-        <div id="burnAlertBox" style="margin-top:8px; font-size:0.75rem; display:flex; justify-content:space-between; align-items:center; padding:6px 10px; border-radius:8px; font-weight:700; background:rgba(231,76,60,0.18); color:#ff7675;">
-          <span id="burnAlertText">⚠️ Harcanmayan bakiye Cuma akşamı yanar!</span>
-          <button type="button" onclick="autoDistributeBudget()" style="background:var(--gold); color:#121212; border:none; padding:4px 9px; border-radius:6px; font-weight:800; font-size:0.72rem; cursor:pointer; white-space:nowrap; margin-left:8px;">
-            Hızlı Dağıt ⚡
-          </button>
+        <div class="simple-budget-track">
+          <div class="simple-budget-fill" id="simpleBudgetFill"></div>
         </div>
       </div>
 
       <div id="weeklyDaysContainer"></div>
 
-      <button type="button" class="btn-primary" id="btnNextFromBudget" style="margin-top:6px;" onclick="goToGame(3)">
-        Harcama Planını Onayla & Devam Et ➔
+      <button type="button" class="btn-primary" id="btnNextFromBudget" style="margin-top:6px;" disabled onclick="goToGame(3)">
+        5 Günü Seç & Devam Et (0 / 5)
       </button>
     </div>
   </div>
@@ -1055,7 +1125,7 @@
     });
   }
 
-  const stageLabels = ["Başlangıç", "1. Seçim", "2. Bütçe Kartı", "3. Öncelik", "4. Alışkanlık", "5. Durumlar"];
+  const stageLabels = ["Başlangıç", "1. Turnuva", "2. Bütçe Planı", "3. Öncelik", "4. Alışkanlık", "5. Durumlar"];
   let currentStage = 0;
   let maxReachedStage = 0;
   const visitedStages = new Set([0]);
@@ -1072,9 +1142,11 @@
         return { complete: done === 5, reason: `Başlangıç adımında eksik alanlar var (${done}/5)` };
       }
       case 1:
-        return { complete: qMatchIdx === 15, reason: `1. Adımda ${15 - qMatchIdx} seçim daha yapılmalı` };
-      case 2:
-        return { complete: weeklyDayAllocations.length === 5, reason: "2. Adımda harcama planı tamamlanmadı" };
+        return { complete: qMatchIdx === 15, reason: `1. Adımda ${15 - qMatchIdx} eşleşme daha seçilmeli` };
+      case 2: {
+        const chosenCnt = weeklyDayAllocations.filter(d => d.selectedCost !== null).length;
+        return { complete: weeklyDayAllocations.length === 5 && chosenCnt === 5, reason: `2. Adımda ${5 - chosenCnt} gün daha seçilmeli` };
+      }
       case 3:
         return { complete: selectedBestPriority !== null, reason: "3. Adımda en önemli özellik seçilmedi" };
       case 4: {
@@ -1122,7 +1194,19 @@
     } else {
       alertBar.classList.remove("show");
     }
+
+    syncStickyWalletOffset();
   }
+
+  function syncStickyWalletOffset() {
+    const topBarEl = document.getElementById("topBar");
+    const walletCardEl = document.getElementById("walletCardSimple");
+    if (topBarEl && walletCardEl) {
+      walletCardEl.style.top = (topBarEl.offsetHeight + 14) + "px";
+    }
+  }
+
+  window.addEventListener("resize", syncStickyWalletOffset);
 
   window.jumpToFirstIncompleteStage = function() {
     for (let i = 0; i <= 5; i++) {
@@ -1366,7 +1450,7 @@
   };
 
   // =========================================================================
-  // ADIM 1: 16 YEMEK QUIZEI TURNUVASI (SADE ARAYÜZ + SHUFFLE MEKANİĞİ)
+  // ADIM 1: 16 YEMEK QUIZEI TURNUVASI (15 EŞLEŞME + SHUFFLE + RENKLİ TURLAR)
   // =========================================================================
   function shuffleArray(arr) {
     const a = [...arr];
@@ -1385,7 +1469,15 @@
   let qMatchIdx = 0;
   let currentPair = [];
   let quizeiShuffleCount = 0;
+  let lastRenderedRoundIdx = -1;
   const quizeiUndoStack = [];
+
+  const quizeiRoundThemes = [
+    { name: "Son 16",       label: "🔵 Son 16 Turu",      color: "#3498DB", bg: "rgba(52, 152, 219, 0.14)", total: 8 },
+    { name: "Çeyrek Final", label: "🔥 Çeyrek Final",     color: "#F39C12", bg: "rgba(243, 156, 18, 0.14)", total: 4 },
+    { name: "Yarı Final",   label: "⚡ Yarı Final",       color: "#9B59B6", bg: "rgba(155, 89, 182, 0.16)", total: 2 },
+    { name: "👑 Final",     label: "👑 Büyük Final!",     color: "#D4AF37", bg: "rgba(212, 175, 55, 0.18)", total: 1 }
+  ];
 
   function getCurrentRoundPoolInfo() {
     if (qMatchIdx < 8)  return { list: r16List, startIdx: qMatchIdx * 2 };
@@ -1416,26 +1508,64 @@
       return;
     }
 
+    let roundIdx = 0;
+    let matchInRound = 1;
+
     if (qMatchIdx < 8) {
+      roundIdx = 0;
+      matchInRound = qMatchIdx + 1;
       currentPair = [r16List[qMatchIdx * 2], r16List[qMatchIdx * 2 + 1]];
     } else if (qMatchIdx < 12) {
+      roundIdx = 1;
+      matchInRound = qMatchIdx - 7;
       currentPair = [qfList[(qMatchIdx - 8) * 2], qfList[(qMatchIdx - 8) * 2 + 1]];
     } else if (qMatchIdx < 14) {
+      roundIdx = 2;
+      matchInRound = qMatchIdx - 11;
       currentPair = [sfList[(qMatchIdx - 12) * 2], sfList[(qMatchIdx - 12) * 2 + 1]];
     } else {
+      roundIdx = 3;
+      matchInRound = 1;
       currentPair = [fnList[0], fnList[1]];
     }
 
-    // Sadeleştirilmiş üst başlık ve ilerleme çubuğu
-    const isFinalMatch = qMatchIdx === 14;
-    document.getElementById("qStageTitle").textContent = isFinalMatch
-      ? "👑 1. Adım: Son Seçim!"
-      : "🍽️ 1. Adım: Hangisi Daha Cazip?";
-    document.getElementById("qRoundHint").textContent = isFinalMatch
-      ? "En cazip gelen favori yemeğini belirle"
-      : "İki seçenekten sana daha cazip geleni seç";
-    document.getElementById("qStepCounter").textContent = `${qMatchIdx + 1} / 15`;
-    document.getElementById("qProgressFill").style.width = `${Math.round(((qMatchIdx + 1) / 15) * 100)}%`;
+    const theme = quizeiRoundThemes[roundIdx];
+    const scr1Card = document.getElementById("scr1Card");
+    scr1Card.style.setProperty("--round-color", theme.color);
+    scr1Card.style.setProperty("--round-bg", theme.bg);
+
+    if (lastRenderedRoundIdx !== -1 && lastRenderedRoundIdx !== roundIdx) {
+      scr1Card.classList.remove("round-flash");
+      void scr1Card.offsetWidth;
+      scr1Card.classList.add("round-flash");
+    }
+    lastRenderedRoundIdx = roundIdx;
+
+    for (let i = 0; i < 4; i++) {
+      const stepEl = document.getElementById(`rStep${i}`);
+      stepEl.className = "round-step";
+      if (i < roundIdx) {
+        stepEl.classList.add("done");
+        stepEl.textContent = `✓ ${quizeiRoundThemes[i].name.replace("👑 ", "")}`;
+      } else if (i === roundIdx) {
+        stepEl.classList.add("active");
+        stepEl.textContent = quizeiRoundThemes[i].name;
+      } else {
+        stepEl.textContent = quizeiRoundThemes[i].name;
+      }
+    }
+
+    const titleEl = document.getElementById("qStageTitle");
+    titleEl.textContent = `🍽️ 1. Adım: Hangisi Daha Cazip?`;
+    titleEl.style.color = theme.color;
+
+    document.getElementById("roundLabelText").textContent = theme.label;
+    document.getElementById("roundMatchCounter").textContent =
+      roundIdx === 3 ? "Şampiyonluk Maçı" : `Eşleşme ${matchInRound} / ${theme.total}`;
+
+    const progressPct = Math.round(((matchInRound - 1) / theme.total) * 100);
+    document.getElementById("roundProgressFill").style.width =
+      roundIdx === 3 ? "100%" : `${Math.max(12, progressPct)}%`;
 
     ["qLeft", "qRight"].forEach((elId, idx) => {
       const v = currentPair[idx];
@@ -1466,12 +1596,14 @@
     const shuffleBtn = document.getElementById("btnShuffleQuizei");
     if (remainingInRound >= 4) {
       shuffleBtn.disabled = false;
-      shuffleBtn.textContent = "🔀 İkisini de Seviyorum — Başka İkili Getir";
+      shuffleBtn.textContent = remainingInRound >= 6
+        ? `🔀 İkisini de Seviyorum — Karıştır (Seçilmemiş ${remainingInRound - 2} yemekten yeni 2'li getir)`
+        : `🔀 İkisini de Seviyorum — Eşleşmeleri Karıştır (Son 4 yemek)`;
     } else {
       shuffleBtn.disabled = true;
-      shuffleBtn.textContent = isFinalMatch
-        ? "👑 Son İkili — Favorini Seç"
-        : "🔀 Bu Aşamada Başka Seçenek Kalmadı";
+      shuffleBtn.textContent = qMatchIdx === 14
+        ? "👑 Büyük Final — Şampiyonunu Seç (Karıştırılamaz)"
+        : "🔀 Bu Turun Son Eşleşmesi (Seçilmemiş başka yemek kalmadı)";
     }
 
     if (isAfterShuffle) {
@@ -1532,11 +1664,11 @@
       }
 
       reorderedTail = [newA, newB, ...rest];
-      showShuffleToast(`🔀 ${curA.short} ve ${curB.short} ayrıldı — yeni 2 yemek getirildi!`);
+      showShuffleToast(`🔀 ${curA.short} ve ${curB.short} farklı eşleşmelere ayrıldı — yeni 2 yemek getirildi!`);
     } else {
       const [c, d] = others;
       reorderedTail = [c, curA, d, curB];
-      showShuffleToast(`🔀 ${curA.short} ve ${curB.short} farklı yemeklerle eşleştirildi!`);
+      showShuffleToast(`🔀 ${curA.short} ve ${curB.short} birbirinden ayrılarak çapraz eşleştirildi!`);
     }
 
     for (let i = 0; i < reorderedTail.length; i++) {
@@ -1600,7 +1732,7 @@
   }
 
   // =========================================================================
-  // ADIM 2: DİNAMİK HAFTALIK BÜTÇE KARTI OYUNU
+  // ADIM 2: SADELEŞTİRİLMİŞ HAFTALIK BÜTÇE PLANI (OTOMATİK SEÇİM YOK)
   // =========================================================================
   let weeklyTotalBudget = 1200;
   let weeklyDayAllocations = [];
@@ -1614,14 +1746,14 @@
       dayName: weekDayNames[i],
       rank: i + 1,
       meal: meal,
-      selectedCost: 60,
-      selectedTag: "YEMEKHANE"
+      selectedCost: null,
+      selectedTag: null
     }));
     renderWeeklyBudgetGame();
   }
 
   function getWeeklySpentTotal() {
-    return weeklyDayAllocations.reduce((sum, d) => sum + d.selectedCost, 0);
+    return weeklyDayAllocations.reduce((sum, d) => sum + (d.selectedCost || 0), 0);
   }
 
   function renderWeeklyBudgetGame() {
@@ -1631,57 +1763,106 @@
     }
     weeklyTotalBudget = (baselineState.normalBudgetTl || 240) * 5;
     const spent = getWeeklySpentTotal();
-    const burn = Math.max(0, weeklyTotalBudget - spent);
-    const baseLocked = 60 * 5;
-    const upgradeSpent = Math.max(0, spent - baseLocked);
+    const remaining = Math.max(0, weeklyTotalBudget - spent);
+    const chosenCount = weeklyDayAllocations.filter(d => d.selectedCost !== null).length;
+    const spentPct = Math.min(100, Math.round((spent / weeklyTotalBudget) * 100));
+    const remainingPct = weeklyTotalBudget > 0 ? (remaining / weeklyTotalBudget) * 100 : 0;
+
+    // Kalan para azaldıkça renk: Yeşil -> Turuncu -> Kırmızı
+    let budgetColor = "var(--green)";
+    if (remainingPct <= 25) {
+      budgetColor = "var(--red)";
+    } else if (remainingPct <= 55) {
+      budgetColor = "var(--amber)";
+    }
 
     document.getElementById("lblWeeklyTotal").textContent = `${weeklyTotalBudget} TL`;
     document.getElementById("lblWeeklySpent").textContent = `${spent} TL`;
-    document.getElementById("lblWeeklyBurn").textContent = `${burn} TL`;
 
-    const basePct = Math.min(100, (baseLocked / weeklyTotalBudget) * 100);
-    const upgPct = Math.min(100 - basePct, (upgradeSpent / weeklyTotalBudget) * 100);
-    const burnPct = Math.max(0, 100 - basePct - upgPct);
+    const remEl = document.getElementById("lblWeeklyRemaining");
+    remEl.textContent = `${remaining} TL`;
+    remEl.style.color = budgetColor;
 
-    document.getElementById("barBase").style.width = `${basePct}%`;
-    document.getElementById("barUpgrade").style.width = `${upgPct}%`;
-    document.getElementById("barBurn").style.width = `${burnPct}%`;
+    const fillEl = document.getElementById("simpleBudgetFill");
+    fillEl.style.width = `${spentPct}%`;
+    fillEl.style.background = budgetColor;
 
-    const alertBox = document.getElementById("burnAlertBox");
-    const alertTxt = document.getElementById("burnAlertText");
-
-    if (burn === 0) {
-      alertBox.style.background = "rgba(46, 204, 113, 0.18)";
-      alertBox.style.color = "var(--green)";
-      alertTxt.textContent = "✓ Mükemmel! Bütçenin tamamını değerlendirdin.";
-    } else if (burn <= 50) {
-      alertBox.style.background = "rgba(243, 156, 18, 0.18)";
-      alertBox.style.color = "var(--amber)";
-      alertTxt.textContent = `💡 Kartta sadece ${burn} TL kaldı; üst menülere yükseltebilirsin!`;
-    } else {
-      alertBox.style.background = "rgba(231, 76, 60, 0.18)";
-      alertBox.style.color = "#ff7675";
-      alertTxt.textContent = `🔥 Dikkat: ${burn} TL harcanmadı ve Cuma akşamı silinecek!`;
+    const walletCardEl = document.getElementById("walletCardSimple");
+    if (walletCardEl) {
+      walletCardEl.style.borderColor = remainingPct <= 25 ? "var(--red)" : "#3a3a3a";
     }
+
+    const countEl = document.getElementById("lblDaysChosenCount");
+    countEl.textContent = `${chosenCount} / 5 Gün Seçildi`;
+    countEl.style.color = chosenCount === 5 ? "var(--green)" : "var(--amber)";
+
+    const nextBtn = document.getElementById("btnNextFromBudget");
+    nextBtn.disabled = chosenCount !== 5;
+    nextBtn.textContent = chosenCount === 5
+      ? "Planı Onayla & Devam Et ➔"
+      : `5 Günü Seç & Devam Et (${chosenCount} / 5)`;
 
     const container = document.getElementById("weeklyDaysContainer");
     container.innerHTML = weeklyDayAllocations.map((d, idx) => {
-      const isUpgraded = d.selectedCost > 60;
-      const extraSpent = d.selectedCost - 60;
-      const maxAllowedForDay = d.selectedCost + burn;
       const m = d.meal;
+      const isChosen = d.selectedCost !== null;
+      const otherSum = spent - (d.selectedCost || 0);
+      const otherUnselectedCount = weeklyDayAllocations.filter((x, i) => i !== idx && x.selectedCost === null).length;
+      const maxAllowedForDay = weeklyTotalBudget - otherSum - (otherUnselectedCount * 60);
 
+      const isCafeteriaMeal = m.id === "yemekhane";
+      const canAffordCaf = 60 <= maxAllowedForDay;
       const canAffordStd = m.price <= maxAllowedForDay;
       const canAffordUpg = m.upgradedPrice <= maxAllowedForDay;
 
+      const buttonsHtml = isCafeteriaMeal
+        ? `
+          <div class="tier-grid-2">
+            <button type="button" class="tier-btn-3 ${d.selectedTag === 'YEMEKHANE' ? 'active-gold' : ''}"
+                    ${!canAffordCaf ? 'disabled' : ''}
+                    onclick="setDayBudgetChoice(${idx}, 60, 'YEMEKHANE')">
+              🍲 Yemekhane Menüsü
+              <strong>60 TL</strong>
+            </button>
+            <button type="button" class="tier-btn-3 ${d.selectedTag === 'UPGRADED' ? 'active-gold' : ''}"
+                    ${!canAffordUpg ? 'disabled' : ''}
+                    onclick="setDayBudgetChoice(${idx}, ${m.upgradedPrice}, 'UPGRADED')">
+              ✨ Ekstra / İçecekli
+              <strong>${m.upgradedPrice} TL</strong>
+            </button>
+          </div>
+        `
+        : `
+          <div class="tier-grid-3">
+            <button type="button" class="tier-btn-3 ${d.selectedTag === 'YEMEKHANE' ? 'active-gold' : ''}"
+                    ${!canAffordCaf ? 'disabled' : ''}
+                    onclick="setDayBudgetChoice(${idx}, 60, 'YEMEKHANE')">
+              🍲 Yemekhane
+              <strong>60 TL</strong>
+            </button>
+            <button type="button" class="tier-btn-3 ${d.selectedTag === 'STANDART' ? 'active-gold' : ''}"
+                    ${!canAffordStd ? 'disabled' : ''}
+                    onclick="setDayBudgetChoice(${idx}, ${m.price}, 'STANDART')">
+              🍽️ Standart
+              <strong>${m.price} TL</strong>
+            </button>
+            <button type="button" class="tier-btn-3 ${d.selectedTag === 'UPGRADED' ? 'active-gold' : ''}"
+                    ${!canAffordUpg ? 'disabled' : ''}
+                    onclick="setDayBudgetChoice(${idx}, ${m.upgradedPrice}, 'UPGRADED')">
+              ✨ 1.5 / İçecekli
+              <strong>${m.upgradedPrice} TL</strong>
+            </button>
+          </div>
+        `;
+
       return `
-        <div class="day-budget-card ${isUpgraded ? 'upgraded' : ''}">
+        <div class="day-budget-card ${isChosen ? 'chosen' : ''}">
           <div class="day-budget-header">
             <span style="font-size:0.76rem; font-weight:800; color:var(--gold);">
               ${d.dayName} • Turnuva #${d.rank}
             </span>
-            <span style="font-size:0.8rem; font-weight:800; padding:3px 9px; border-radius:6px; background:var(--surface); color:${isUpgraded ? 'var(--gold)' : 'var(--muted)'};">
-              ${d.selectedCost} TL ${isUpgraded ? `(+${extraSpent} TL Ekstra)` : `(Yemekhane Tabanı)`}
+            <span style="font-size:0.74rem; font-weight:800; padding:3px 9px; border-radius:6px; background:var(--surface); color:${isChosen ? 'var(--green)' : 'var(--muted)'};">
+              ${isChosen ? `✓ ${d.selectedCost} TL` : 'Seçim Bekleniyor'}
             </span>
           </div>
 
@@ -1691,30 +1872,12 @@
             <div>
               <div style="font-weight:800; font-size:0.9rem; color:var(--text);">${m.emoji} ${m.name}</div>
               <div style="font-size:0.72rem; color:var(--muted); margin-top:2px;">
-                Standart: <b style="color:var(--gold);">${m.price} TL</b> • 1.5 / Menü: <b style="color:var(--text);">${m.upgradedPrice} TL</b>
+                Bu gün için hangisini tercih edersin?
               </div>
             </div>
           </div>
 
-          <div class="tier-grid-3">
-            <button type="button" class="tier-btn-3 ${d.selectedCost === 60 ? 'active-cafeteria' : ''}"
-                    onclick="setDayBudgetChoice(${idx}, 60, 'YEMEKHANE')">
-              Pas (Yemekhane)
-              <strong>60 TL</strong>
-            </button>
-            <button type="button" class="tier-btn-3 ${d.selectedCost === m.price ? 'active-gold' : ''}"
-                    ${!canAffordStd ? 'disabled' : ''}
-                    onclick="setDayBudgetChoice(${idx}, ${m.price}, 'STANDART')">
-              Standart Menü
-              <strong>${m.price} TL</strong>
-            </button>
-            <button type="button" class="tier-btn-3 ${d.selectedCost === m.upgradedPrice ? 'active-gold' : ''}"
-                    ${!canAffordUpg ? 'disabled' : ''}
-                    onclick="setDayBudgetChoice(${idx}, ${m.upgradedPrice}, 'UPGRADED')">
-              1.5 Pors. / İçecekli
-              <strong>${m.upgradedPrice} TL</strong>
-            </button>
-          </div>
+          ${buttonsHtml}
         </div>
       `;
     }).join("");
@@ -1724,8 +1887,9 @@
 
   window.setDayBudgetChoice = function(dayIdx, cost, tag) {
     const d = weeklyDayAllocations[dayIdx];
-    const otherSum = getWeeklySpentTotal() - d.selectedCost;
-    if (otherSum + cost <= weeklyTotalBudget) {
+    const otherSum = getWeeklySpentTotal() - (d.selectedCost || 0);
+    const otherUnselectedCount = weeklyDayAllocations.filter((x, i) => i !== dayIdx && x.selectedCost === null).length;
+    if (otherSum + cost + (otherUnselectedCount * 60) <= weeklyTotalBudget) {
       d.selectedCost = cost;
       d.selectedTag = tag;
       renderWeeklyBudgetGame();
@@ -1734,26 +1898,9 @@
 
   window.resetBudgetPlan = function() {
     weeklyDayAllocations.forEach(d => {
-      d.selectedCost = 60;
-      d.selectedTag = "YEMEKHANE";
+      d.selectedCost = null;
+      d.selectedTag = null;
     });
-    renderWeeklyBudgetGame();
-  };
-
-  window.autoDistributeBudget = function() {
-    window.resetBudgetPlan();
-    for (let i = 0; i < weeklyDayAllocations.length; i++) {
-      const d = weeklyDayAllocations[i];
-      const m = d.meal;
-      const otherSum = getWeeklySpentTotal() - d.selectedCost;
-      if (otherSum + m.upgradedPrice <= weeklyTotalBudget) {
-        d.selectedCost = m.upgradedPrice;
-        d.selectedTag = "UPGRADED";
-      } else if (otherSum + m.price <= weeklyTotalBudget) {
-        d.selectedCost = m.price;
-        d.selectedTag = "STANDART";
-      }
-    }
     renderWeeklyBudgetGame();
   };
 
@@ -2034,7 +2181,7 @@
     const upgradeSurplusCapacity = Math.max(1, weeklyTotalBudget - 300);
     const upgradeSpent = Math.max(0, spentTotal - 300);
     const upgradeRatio = clamp(upgradeSpent / upgradeSurplusCapacity, 0, 1);
-    const upgradedDaysCount = weeklyDayAllocations.filter(d => d.selectedCost > 60).length;
+    const upgradedDaysCount = weeklyDayAllocations.filter(d => (d.selectedCost || 0) > 60).length;
 
     const reasonRatio = code => moodAnswers.filter(a => a && a.reason === code).length / moodScenarios.length;
 
@@ -2044,6 +2191,7 @@
     const quizeiWaitTight  = clamp((35 - champWait) / 30, 0, 1);
     const quizeiTasteTight = clamp((champPrice - 60) / 290, 0, 1);
 
+    // 1) V1: Fiyat Hassasiyeti
     const budgetTight = clamp((500 - (baselineState.normalBudgetTl || 240)) / 380, 0, 1);
     const cardFrugality = 1.0 - upgradeRatio;
     const pastPriceTight = clamp((350 - pastAvgPrice) / 290, 0, 1);
@@ -2058,6 +2206,7 @@
       0, 1
     ).toFixed(2);
 
+    // 2) V2: Zaman Sabırsızlığı
     const breakTight = clamp((90 - (baselineState.breakMin || 40)) / 70, 0, 1);
     const waitImpatience = clamp((25 - (waitMaxMin ?? 10)) / 20, 0, 1);
     const V2_Zaman_Sabirsizligi = +clamp(
@@ -2069,6 +2218,7 @@
       0, 1
     ).toFixed(2);
 
+    // 3) V3: Lezzet Odağı
     const V3_Lezzet_Odagi = +clamp(
       0.45 * upgradeRatio +
       0.25 * quizeiTasteTight +
@@ -2077,6 +2227,7 @@
       0.10, 1
     ).toFixed(2);
 
+    // 4) V4: Konfor & Sosyal Eğilim
     const groupScore = baselineState.groupCommonGroundRule === "PURE_INDIVIDUAL" ? 0.25 : 0.70;
     const V4_Konfor_Sosyal = +clamp(
       0.55 * groupScore +
@@ -2085,6 +2236,7 @@
       0, 1
     ).toFixed(2);
 
+    // 5) V5: Tekrar Toleransı
     const repObj = repeatOptions.find(r => r.id === selectedRepeatInterval);
     const repVal = repObj ? repObj.val : 0.5;
     const V5_Tekrar_Toleransi = +clamp(
@@ -2092,6 +2244,7 @@
       0, 1
     ).toFixed(2);
 
+    // 6) V6: Yenilik & Durumsal Esneklik
     const uniqueScenarioMeals = new Set(moodAnswers.map(a => a.meal_id)).size;
     const V6_Yenilik_ve_Esneklik = +clamp(
       0.60 * (uniqueScenarioMeals / moodScenarios.length) +
@@ -2107,6 +2260,7 @@
       D02_Tarih: new Date().toISOString(),
       D03_Sure_Sn: Math.round((performance.now() - SESSION_START_MS) / 1000),
 
+      // Adım 0
       D04_Mod_Valence: baselineState.valence,
       D05_Mod_Arousal: baselineState.arousal,
       D06_Ders_Arasi_Dk: baselineState.breakMin,
@@ -2120,20 +2274,24 @@
       D10_Gecen_Hafta_Ort_Fiyat: Math.round(pastAvgPrice),
       D11_Grup_Kurali: baselineState.groupCommonGroundRule,
 
+      // Adım 1
       D12_Quizei_Sampiyon: championMeal ? championMeal.name : "",
       D13_Quizei_Finalist: runnerUpMeal ? runnerUpMeal.name : "",
       D13_Quizei_Shuffle_Sayisi: quizeiShuffleCount,
 
+      // Adım 2
       D14_Haftalik_Toplam_Butce: weeklyTotalBudget,
       D15_Haftalik_Harcanan_TL: spentTotal,
       D16_Haftalik_Yanacak_TL: Math.max(0, weeklyTotalBudget - spentTotal),
       D17_Yukseltilen_Gun_Sayisi: upgradedDaysCount,
-      D18_Haftalik_Harcama_Plani: weeklyDayAllocations.map(d => `${d.dayName}:${d.meal.short}(${d.selectedCost}TL)`).join("|"),
+      D18_Haftalik_Harcama_Plani: weeklyDayAllocations.map(d => `${d.dayName}:${d.meal.short}(${d.selectedCost || 0}TL)`).join("|"),
 
+      // Adım 3 & 4
       D19_En_Onemli_Kriter: selectedBestPriority,
       D20_Tekrar_Yeme_Suresi: selectedRepeatInterval,
       D21_Maks_Bekleme_Dk: waitMaxMin,
 
+      // Adım 5
       D22_Durum1_Stres_Neden: moodAnswers[0]?.reason,
       D23_Durum1_Stres_Butce: moodAnswers[0]?.budget,
       D24_Durum1_Stres_Yemek: moodAnswers[0]?.meal_name,
@@ -2154,6 +2312,7 @@
       D35_Durum5_Lab_Butce: moodAnswers[4]?.budget,
       D36_Durum5_Lab_Yemek: moodAnswers[4]?.meal_name,
 
+      // 6 Ana Vektör
       V1_Fiyat_Hassasiyeti,
       V2_Zaman_Sabirsizligi,
       V3_Lezzet_Odagi,
@@ -2237,6 +2396,7 @@
     }
   };
 
+  // Başlangıç
   initStep0();
   refreshNavUI();
 </script>
